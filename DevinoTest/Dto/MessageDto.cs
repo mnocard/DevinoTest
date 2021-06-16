@@ -1,14 +1,24 @@
-﻿namespace DevinoTest.Dto
+﻿using System.Text.Json.Serialization;
+
+namespace DevinoTest.Dto
 {
+    /// <summary>Класс обертка для отправляемых на сервер сообщений</summary>
     public class RootMesagesDto
     {
-        public MessageDto[] messages { get; set; }
+        [JsonPropertyName("messages")]
+        public MessageDto[] Messages { get; set; }
     }
 
+    /// <summary>Отправляемое смс сообщение.</summary>
     public class MessageDto
     {
-        public string from { get; set; }
-        public string to { get; set; }
-        public string text { get; set; }
+        [JsonPropertyName("from")]
+        public string From { get; set; }
+
+        [JsonPropertyName("to")]
+        public string To { get; set; }
+
+        [JsonPropertyName("text")]
+        public string Text { get; set; }
     }
 }

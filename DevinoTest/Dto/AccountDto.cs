@@ -1,27 +1,55 @@
-﻿namespace DevinoTest.Dto
+﻿using System.Text.Json.Serialization;
+
+namespace DevinoTest.Dto
 {
+    /// <summary>Класс обертка для получаемого с сервера ответа</summary>
     public class AccountRootobject
     {
-        public AccountResult result { get; set; }
+        [JsonPropertyName("result")]
+        public AccountResult Result { get; set; }
     }
 
+    /// <summary>Класс обертка для класса аккаунта. Необходим в связи со спецификой ответа сервера</summary>
     public class AccountResult
     {
-        public AccountDto account { get; set; }
-        public object[] validPacketChannels { get; set; }
+        [JsonPropertyName("account")]
+        public AccountDto Account { get; set; }
+
+        [JsonPropertyName("validPacketChannels")]
+        public object[] ValidPacketChannels { get; set; }
     }
 
+    /// <summary>Собственно класс представления данных об аккаунте</summary>
     public class AccountDto
     {
-        public int companyId { get; set; }
-        public string accountType { get; set; }
-        public decimal balance { get; set; }
-        public decimal credit { get; set; }
-        public decimal reserveSms { get; set; }
-        public decimal reserveViber { get; set; }
-        public decimal reserve { get; set; }
-        public int currencyId { get; set; }
-        public bool isBlocked { get; set; }
-        public decimal notifyThreshold { get; set; }
+        [JsonPropertyName("companyId")]
+        public int CompanyId { get; set; }
+
+        [JsonPropertyName("accountType")]
+        public string AccountType { get; set; }
+
+        [JsonPropertyName("balance")]
+        public decimal Balance { get; set; }
+
+        [JsonPropertyName("credit")]
+        public decimal Credit { get; set; }
+
+        [JsonPropertyName("reserveSms")]
+        public decimal ReserveSms { get; set; }
+
+        [JsonPropertyName("reserveViber")]
+        public decimal ReserveViber { get; set; }
+
+        [JsonPropertyName("reserve")]
+        public decimal Reserve { get; set; }
+
+        [JsonPropertyName("currencyId")]
+        public int CurrencyId { get; set; }
+
+        [JsonPropertyName("isBlocked")]
+        public bool IsBlocked { get; set; }
+
+        [JsonPropertyName("notifyThreshold")]
+        public decimal NotifyThreshold { get; set; }
     }
 }

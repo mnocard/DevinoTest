@@ -28,16 +28,16 @@ namespace DevinoTest
             client.DefaultRequestHeaders.Add("Authorization", _ApiKey);
 
             var account = await GetAccountInfoAsync(_AccountApi);
-            Console.WriteLine($"Ваш баланс составляет: {account.balance} руб.");
+            Console.WriteLine($"Ваш баланс составляет: {account.Balance} руб.");
 
             SmsRootobject result = null;
-            if (account.balance >= 100)
+            if (account.Balance >= 100)
             {
                 result = await SendSmsAsync(_SendSmsApi);
 
                 Console.WriteLine("Результаты отправки сообщений:");
-                foreach (var message in result.result)
-                    Console.WriteLine($"Статус отправки сообщения с индентификатором {message.messageId} - {message.code}");
+                foreach (var message in result.Result)
+                    Console.WriteLine($"Статус отправки сообщения с индентификатором {message.MessageId} - {message.Code}");
             }
             Console.ReadKey();
         }
@@ -56,12 +56,12 @@ namespace DevinoTest
                     account = JsonSerializer.Deserialize<AccountRootobject>(jsonString);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.Message);
+                throw;
             }
 
-            return account.result.account;
+            return account.Result.Account;
         }
 
         /// <summary>Отправка смс</summary>
@@ -72,11 +72,11 @@ namespace DevinoTest
             try
             {
                 var messages = new RootMesagesDto();
-                messages.messages = SmsService.GetSmsList().Select(sms => new MessageDto
+                messages.Messages = SmsService.GetSmsList().Select(sms => new MessageDto
                 {
-                    from = "DTSMS",
-                    to = sms.Phone,
-                    text = sms.Message,
+                    From = "DTSMS",
+                    To = sms.Phone,
+                    Text = sms.Message,
                 }).ToArray();
 
                 var json = JsonSerializer.Serialize(messages);
@@ -87,9 +87,9 @@ namespace DevinoTest
 
                 sms = JsonSerializer.Deserialize<SmsRootobject>(result);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.Message);
+                throw;
             }
 
             return sms;

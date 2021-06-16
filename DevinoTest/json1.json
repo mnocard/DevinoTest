@@ -1,3 +1,17 @@
-"{\"result\":{\"account\":{\"companyId\":24154,\"accountType\":\"PREPAID\",\"balance\":100.0000,\"credit\":0.0000,\"reserveSms\":0.0000,\"reserveViber\":0.0000,\"reserve\":0.0000,\"currencyId\":1,\"isBlocked\":false,\"notifyThreshold\":1000.00},\"validPacketChannels\":[]}}"{
-
+{
+  "result": {
+    "account": {
+      "companyId": 24154,
+      "accountType": "PREPAID",
+      "balance": 100.0000,
+      "credit": 0.0000,
+      "reserveSms": 0.0000,
+      "reserveViber": 0.0000,
+      "reserve": 0.0000,
+      "currencyId": 1,
+      "isBlocked": false,
+      "notifyThreshold": 1000.00
+    },
+    "validPacketChannels": []
+  }
 }

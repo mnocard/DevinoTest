@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using DevinoTest.Dto;
 using DevinoTest.Services;
-
-using Newtonsoft.Json;
 
 namespace DevinoTest
 {
@@ -15,41 +16,83 @@ namespace DevinoTest
         private static readonly HttpClient client = new HttpClient();
         private const string _AccountApi = "/billing-api/companies/current/account";
         private const string _SendSmsApi = "/sms/messages";
-        private const string _SmsStatusApi = "/sms-stat/statuses/get-by-ids";
+        private const string _AppJson = "application/json";
+        private const string _ApiKey = "Key 04ee2b47-3a97-4134-98d7-dd21a5223ea6";
 
         static async Task Main(string[] args)
         {
             client.BaseAddress = new Uri("https://api.devino.online");
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("Authorization", "Key 04ee2b47-3a97-4134-98d7-dd21a5223ea6");
+                new MediaTypeWithQualityHeaderValue(_AppJson));
+            client.DefaultRequestHeaders.Add("Authorization", _ApiKey);
 
-            var account = await GetAccountInfoAsync();
+            var account = await GetAccountInfoAsync(_AccountApi);
             Console.WriteLine($"Ваш баланс составляет: {account.balance} руб.");
 
+            SmsRootobject result = null;
+            if (account.balance >= 100)
+            {
+                result = await SendSmsAsync(_SendSmsApi);
 
-            Console.WriteLine("Devino test");
+                Console.WriteLine("Результаты отправки сообщений:");
+                foreach (var message in result.result)
+                    Console.WriteLine($"Статус отправки сообщения с индентификатором {message.messageId} - {message.code}");
+            }
             Console.ReadKey();
         }
 
-        private static async Task<AccountDto> GetAccountInfoAsync()
+        /// <summary>Получение информации об аккаунте</summary>
+        private static async Task<AccountDto> GetAccountInfoAsync(string path)
         {
             AccountRootobject account = null;
+
             try
             {
-                HttpResponseMessage response = await client.GetAsync(_AccountApi);
+                HttpResponseMessage response = await client.GetAsync(path);
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    account = JsonConvert.DeserializeObject<AccountRootobject>(jsonString);
+                    account = JsonSerializer.Deserialize<AccountRootobject>(jsonString);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
+
             return account.result.account;
+        }
+
+        /// <summary>Отправка смс</summary>
+        private static async Task<SmsRootobject> SendSmsAsync(string path)
+        {
+            SmsRootobject sms = null;
+
+            try
+            {
+                var messages = new RootMesagesDto();
+                messages.messages = SmsService.GetSmsList().Select(sms => new MessageDto
+                {
+                    from = "DTSMS",
+                    to = sms.Phone,
+                    text = sms.Message,
+                }).ToArray();
+
+                var json = JsonSerializer.Serialize(messages);
+                var data = new StringContent(json, Encoding.UTF8, _AppJson);
+
+                HttpResponseMessage response = await client.PostAsync(path, data);
+                var result = await response.Content.ReadAsStringAsync();
+
+                sms = JsonSerializer.Deserialize<SmsRootobject>(result);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            return sms;
         }
     }
 }

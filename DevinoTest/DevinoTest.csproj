@@ -7,11 +7,8 @@
 
   <ItemGroup>
     <None Remove="Dto\AccountDto.cs~RF1467832d.TMP" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <None Remove="Dto\MessageDto.cs~RF1475bdf0.TMP" />
+    <None Remove="json1.json" />
   </ItemGroup>
 
 </Project>
